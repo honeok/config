@@ -1,0 +1,30 @@
+[mysqld]
+
+# 连接和线程管理
+max_connections = 1500            # 允许的最大连接数。建议：500-1000（高并发），200-500（低并发）
+thread_cache_size = 512           # 线程缓存大小，影响线程重用程度。建议：256-512
+interactive_timeout = 30           # 交互式连接空闲超时时间（秒）。建议：30-300
+wait_timeout = 30                  # 非交互式连接空闲超时时间（秒）。建议：30-300
+
+# InnoDB设置
+innodb_buffer_pool_size = 2048M   # InnoDB缓冲池大小，影响数据和索引的缓存能力。建议：1GB（1024M）到4GB（4096M）之间
+innodb_buffer_pool_instances = 2   # 缓冲池实例数，多个实例可提高性能。建议：2或4
+innodb_log_buffer_size = 16M       # InnoDB日志缓冲区大小，影响事务提交性能。建议：8M到16M
+innodb_redo_log_capacity = 64M     # InnoDB重做日志容量。建议：根据数据写入量设置，64M一般足够
+innodb_lock_wait_timeout = 30      # 锁等待超时（秒）。建议：30秒
+innodb_file_per_table = 1          # 每个表使用单独的文件。建议：设置为1
+innodb_flush_log_at_trx_commit = 1 # 日志刷新策略，影响数据的持久性。建议：1（安全），2（性能）
+innodb_io_capacity = 1000           # InnoDB IO能力，影响并发读写性能。建议：SSD设置为2000，HDD可适当降低
+innodb_io_capacity_max = 2000       # 最大IO能力，影响写操作。建议：设置为`innodb_io_capacity`的2倍
+
+# 缓存和限制
+table_open_cache = 2000            # 允许打开的表缓存数。建议：500-2000
+open_files_limit = 2048            # 允许打开的文件数量。建议：2048
+tmp_table_size = 16M                # 临时表最大大小。建议：32M
+max_heap_table_size = 16M           # 最大堆表大小。建议：32M
+max_allowed_packet = 16M             # 最大数据包大小。建议：16M（大文本字段可适度增加）
+
+# 缓冲区大小
+sort_buffer_size = 4M               # 排序缓冲区大小。建议：4M到8M
+read_buffer_size = 2M               # 读缓冲区大小。建议：2M到4M
+join_buffer_size = 2M               # 联接缓冲区大小。建议：2M到4M
