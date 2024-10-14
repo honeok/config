@@ -1,0 +1,91 @@
+services:
+  nginx:
+    image: nginx:1.27.2-alpine3.20
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/html:/var/www/html
+      - ./nginx/log:/var/log/nginx
+    tmpfs:
+      - /var/cache/nginx:rw,noexec,nosuid,size=512m
+    networks:
+      - web
+
+  php:
+    image: honeok/php:8.3.12-fpm-alpine3.20
+    container_name: php
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./nginx/html:/var/www/html
+    networks:
+      - web
+
+  php74:
+    image: honeok/php:7.4.33-fpm-alpine3.16
+    container_name: php74
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./nginx/html:/var/www/html
+    networks:
+      - web
+
+  mysql:
+    image: mysql:8.0.39
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/conf.d:/etc/mysql/conf.d
+      - ./mysql/log:/var/log/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: HONEOK_ROOTPASSWD
+      MYSQL_USER: HONEOK_USER
+      MYSQL_PASSWORD: HONEOK_PASSWD
+    networks:
+      - web
+    healthcheck:
+      test: ["CMD-SHELL", "mysql --user=root --password=HONEOK_ROOTPASSWD --execute \"SELECT 1\""]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:7.4.1-alpine3.20
+    container_name: redis
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./redis/data:/data
+    networks:
+      - web
+
+  busybox:
+    image: busybox:1.37.0
+    container_name: ldnmp
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+    command: ["/bin/sh", "-c", "while true; do sleep 3600; done"]
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge
