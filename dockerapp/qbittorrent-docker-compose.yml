@@ -1,7 +1,8 @@
 services:
   qbittorrent:
-    image: linuxserver/qbittorrent:latest
+    image: linuxserver/qbittorrent
     container_name: qbittorrent
+    restart: unless-stopped
     ports:
       - "default_port_1:8081"
       - "6881:6881"
@@ -14,4 +15,9 @@ services:
     volumes:
       - ./config:/config
       - ./downloads:/downloads
-    restart: unless-stopped
+    networks:
+      - qbittorrent
+
+networks:
+  qbittorrent:
+    driver: bridge
