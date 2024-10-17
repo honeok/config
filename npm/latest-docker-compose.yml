@@ -1,6 +1,6 @@
 services:
   npm:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: jc21/nginx-proxy-manager
     container_name: npm
     restart: unless-stopped
     ports:
@@ -24,7 +24,7 @@ services:
       - db
 
   db:
-    image: 'jc21/mariadb-aria:latest'
+    image: jc21/mariadb-aria
     container_name: npm_db
     restart: unless-stopped
     environment:
