@@ -2,6 +2,7 @@ services:
   adguardhome:
     image: adguard/adguardhome
     container_name: adguardhome
+    restart: unless-stopped
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -9,4 +10,9 @@ services:
     volumes:
       - ./work:/opt/adguardhome/work
       - ./conf:/opt/adguardhome/conf
-    restart: unless-stopped
+    networks:
+      - adguardhome
+
+networks:
+  adguardhome:
+    driver: bridge
