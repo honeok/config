@@ -1,7 +1,8 @@
 services:
   easyimage:
-    image: ddsderek/easyimage:latest
+    image: ddsderek/easyimage
     container_name: easyimage
+    restart: unless-stopped
     ports:
       - "default_port_1:80"
     environment:
@@ -11,4 +12,9 @@ services:
     volumes:
       - ./config:/app/web/config
       - ./i:/app/web/i
-    restart: unless-stopped
+    networks:
+      - easyimage
+
+networks:
+  easyimage:
+    driver: bridge
