@@ -1,6 +1,6 @@
 services:
   nextcloud:
-    image: nextcloud:latest
+    image: nextcloud
     container_name: nextcloud
     ports:
       - "default_port_1:80"
@@ -10,3 +10,9 @@ services:
     volumes:
       - ./nextcloud:/var/www/html
     restart: unless-stopped
+    networks:
+      - nextcloud
+
+networks:
+  nextcloud:
+    driver: bridge

@@ -1,7 +1,8 @@
 services:
   emby:
-    image: linuxserver/emby:latest
+    image: linuxserver/emby
     container_name: emby
+    restart: unless-stopped
     ports:
       - "default_port_1:8096"
       - "default_port_2:8920"
@@ -14,4 +15,9 @@ services:
       - ./share1:/mnt/share1
       - ./share2:/mnt/share2
       - ./notify:/mnt/notify
-    restart: unless-stopped
+    networks:
+      - emby
+
+networks:
+  emby:
+    driver: bridge

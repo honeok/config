@@ -1,6 +1,6 @@
 services:
   stirling-pdf:
-    image: frooodle/s-pdf:latest
+    image: frooodle/s-pdf
     container_name: s-pdf
     ports:
       - "default_port_1:8080"
@@ -11,3 +11,9 @@ services:
       - ./config:/configs
       - ./logs:/logs
     restart: unless-stopped
+    networks:
+      - s-pdf
+
+networks:
+  s-pdf:
+    driver: bridge

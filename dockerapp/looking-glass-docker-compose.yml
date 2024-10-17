@@ -2,6 +2,7 @@ services:
   looking-glass:
     image: wikihostinc/looking-glass-server
     container_name: looking-glass
+    restart: unless-stopped
     ports:
       - "default_port_1:80"
       - "default_port_2:default_port_2"
@@ -14,4 +15,9 @@ services:
       - UTILITIES_IPERF3=true
       - UTILITIES_IPERF3_PORT_MIN=default_port_2
       - UTILITIES_IPERF3_PORT_MAX=default_port_2
-    restart: unless-stopped
+    networks:
+      - looking-glass
+
+networks:
+  looking-glass:
+    driver: bridge

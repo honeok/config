@@ -1,6 +1,6 @@
 services:
   moments:
-    image: kingwrcy/moments:latest
+    image: kingwrcy/moments
     container_name: moments
     ports:
       - "default_port_1:3000"
@@ -9,3 +9,9 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     restart: unless-stopped
+    networks:
+      - moments
+
+networks:
+  moments:
+    driver: bridge

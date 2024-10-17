@@ -7,3 +7,9 @@ services:
     volumes:
       - ./data:/opt/app/backend/data
     restart: unless-stopped
+    networks:
+      - share
+
+networks:
+  share:
+    driver: bridge

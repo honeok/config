@@ -14,3 +14,9 @@ services:
       - ./storage:/photoprism/storage
       - ./Pictures:/photoprism/originals
     restart: unless-stopped
+    networks:
+      - photoprism
+
+networks:
+  photoprism:
+    driver: bridge

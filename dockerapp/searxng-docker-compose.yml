@@ -1,6 +1,6 @@
 services:
   searxng:
-    image: alandoyle/searxng:latest
+    image: alandoyle/searxng
     container_name: searxng
     init: true
     ports:
@@ -10,3 +10,9 @@ services:
       - ./templates:/usr/local/searxng/searx/templates/simple
       - ./theme:/usr/local/searxng/searx/static/themes/simple
     restart: unless-stopped
+    networks:
+      - searxng
+
+networks:
+  searxng:
+    driver: bridge

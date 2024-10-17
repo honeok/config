@@ -1,7 +1,13 @@
 services:
   it-tools:
-    image: qingfeng2336/it-tools:latest
+    image: corentinth/it-tools
     container_name: it-tools
+    restart: unless-stopped
     ports:
       - "default_port_1:80"
-    restart: unless-stopped
+    networks:
+      - it-tools
+
+networks:
+  it-tools:
+    driver: bridge
