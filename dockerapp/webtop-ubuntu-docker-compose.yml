@@ -2,6 +2,7 @@ services:
   webtop:
     image: lscr.io/linuxserver/webtop:ubuntu-kde
     container_name: webtop-ubuntu
+    restart: unless-stopped
     ports:
       - default_port_1:3000
     environment:
@@ -16,4 +17,9 @@ services:
     security_opt:
       - seccomp=unconfined
     shm_size: "1gb"
-    restart: unless-stopped
+    networks:
+      - webtop-ubuntu
+
+networks:
+  webtop-ubuntu:
+    driver: bridge
