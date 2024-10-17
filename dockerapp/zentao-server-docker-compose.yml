@@ -1,7 +1,8 @@
 services:
   zentao-server:
-    image: idoop/zentao:latest
+    image: idoop/zentao
     container_name: zentao-server
+    restart: unless-stopped
     ports:
       - "default_port_1:80"
       - "default_port_2:3306"
@@ -13,4 +14,9 @@ services:
       - ./zentao-server/:/opt/zbox/
     extra_hosts:
       - "smtp.exmail.qq.com:163.177.90.125"
-    restart: unless-stopped
+    networks:
+      - zentao
+
+networks:
+  zentao:
+    driver: bridge
