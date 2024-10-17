@@ -1,6 +1,6 @@
 services:
   alist:
-    image: xhofe/alist:latest
+    image: xhofe/alist
     container_name: alist
     volumes:
       - ./config:/opt/alist/data
@@ -12,3 +12,9 @@ services:
       - UMASK=022
       - TZ=Asia/Shanghai
     restart: unless-stopped
+    networks:
+      - alist
+
+networks:
+  alist:
+    driver: bridge
