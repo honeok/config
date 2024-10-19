@@ -9,7 +9,7 @@ services:
       - "default_port_1:2342"
     environment:
       - PHOTOPRISM_UPLOAD_NSFW=true
-      - PHOTOPRISM_ADMIN_PASSWORD=$random_password
+      - PHOTOPRISM_ADMIN_PASSWORD=example_password
     volumes:
       - ./storage:/photoprism/storage
       - ./Pictures:/photoprism/originals
