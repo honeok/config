@@ -1,0 +1,24 @@
+debug: false
+httpport: 80
+language: zh-CN
+grpcport: 5555
+oauth2:
+  type: "github" #Oauth2 登录接入类型，github/gitlab/jihulab/gitee/gitea
+  admin: "honeok" #管理员列表，半角逗号隔开
+  clientid: "Ov23licJcvxwEFQWETGv" # 在 https://github.com/settings/developers 创建，无需审核 Callback 填 http(s)://域名或IP/oauth2/callback
+  clientsecret: "f34dcbb13cab00356bb54071234567890ec54458"
+  endpoint: "" # 如gitea自建需要设置
+site:
+  brand: 我不是611
+  cookiename: "nezha-dashboard" #浏览器 Cookie 字段名，可不改
+  theme: "default"
+ddns:
+  enable: false
+  provider: "webhook"
+  accessid: ""
+  accesssecret: ""
+  webhookmethod: ""
+  webhookurl: ""
+  webhookrequestbody: ""
+  webhookheaders: ""
+  maxretries: 3

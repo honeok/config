@@ -1,0 +1,19 @@
+services:
+  dashboard:
+    image: ghcr.io/naiba/nezha-dashboard:v0.20.13
+    container_name: nezha-dashboard
+    restart: unless-stopped
+    ports:
+      - 8080:80
+      - 5555:5555
+    volumes:
+      - ./data:/dashboard/data
+      - ./static-custom/static:/dashboard/resource/static/custom:ro
+      - ./theme-custom/template:/dashboard/resource/template/theme-custom:ro
+      - ./dashboard-custom/template:/dashboard/resource/template/dashboard-custom:ro
+    networks:
+      - nezha-dashboard
+
+networks:
+  nezha-dashboard:
+    driver: bridge
