@@ -21,7 +21,7 @@ services:
       - web
 
   php:
-    image: honeok/php:fpm-alpine
+    image: kjlion/php:fpm-alpine
     container_name: php
     restart: unless-stopped
     environment:
