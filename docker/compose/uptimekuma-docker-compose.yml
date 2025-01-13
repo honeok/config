@@ -1,12 +1,12 @@
 services:
   uptimekuma:
-    image: louislam/uptime-kuma
+    image: louislam/uptime-kuma:1.23.15-alpine
     container_name: uptimekuma
+    restart: unless-stopped
     ports:
-      - "default_port_1:3001"
+      - 3001:3001
     volumes:
       - ./data:/app/data
-    restart: unless-stopped
     networks:
       - uptimekuma
 

@@ -1,13 +1,15 @@
 services:
-  it-tools:
-    image: corentinth/it-tools
-    container_name: it-tools
+  tools:
+    image: corentinth/it-tools:2024.10.22-7ca5933
+    container_name: tools
     restart: unless-stopped
     ports:
-      - "default_port_1:80"
+      - 80:80
+    environment:
+      - TZ=Asia/Shanghai
     networks:
-      - it-tools
+      - tools
 
 networks:
-  it-tools:
+  tools:
     driver: bridge
