@@ -1,5 +1,9 @@
 # config
 
-[![License](https://img.shields.io/github/license/honeok/config.svg?style=flat)](./LICENSE)
-[![Commit](https://img.shields.io/github/last-commit/honeok/config)](https://github.com/honeok/config)
-[![Commit Activity](https://img.shields.io/github/commit-activity/m/honeok/config.svg)](https://github.com/honeok/config)
+<p align="center">
+  <img src="https://img.shields.io/github/license/honeok/config.svg?style=flat" alt="License" />
+  <img src="https://img.shields.io/github/last-commit/honeok/config" alt="Commit" />
+  <img src="https://img.shields.io/github/commit-activity/m/honeok/config.svg" alt="Commit Activity" />
+</p>
+
+Just do good deeds, without asking about the future.
