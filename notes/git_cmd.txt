@@ -7,3 +7,13 @@ git config --global user.email   git config --global --unset user.email
 
 git config --global user.name "1"
 git config --global user.email "1@gmail.com"
+
+
+# 合并分支release
+honeok@DESKTOP-123456 MINGW64 /d/src/github_code/Tools (master)
+$ git merge --no-ff release
+# 查看日志
+honeok@DESKTOP-123456 MINGW64 /d/src/github_code/Tools (master)
+$ git log --oneline --graph --decorate --all
+honeok@DESKTOP-123456 MINGW64 /d/src/github_code/Tools (master)
+$ git push origin master
