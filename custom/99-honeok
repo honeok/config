@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+#
+# Description: custom MOTD showing hostname IP address disk usage and system uptime.
+#
+# Copyright (c) 2025 honeok <honeok@duck.com>
+#
+# Licensed under the MIT License.
+# This software is provided "as is", without any warranty.
+
+# /etc/update-motd.d/99-honeok
+
+IPV4_ADDRESS="$(curl -fsL -m 1 -4 "http://www.qualcomm.cn/cdn-cgi/trace" 2>/dev/null | awk -F'=' '/^ip=/ {print $2}' || echo Unknown)"
+IPV6_ADDRESS="$(curl -fsL -m 1 -6 "http://www.qualcomm.cn/cdn-cgi/trace" 2>/dev/null | awk -F'=' '/^ip=/ {print $2}' || echo Unknown)"
+DISK_USAGE="$(df -h / | awk 'NR==2 {print $3 " / " $2}')"
+
+separator() { printf "%-70s\n" "-" | sed 's/\s/-/g'; }
+
+command -v toilet >/dev/null 2>&1 && toilet -f big -F gay "honeok"
+command -v neofetch >/dev/null 2>&1 && neofetch
+
+echo "Welcome back honeok! - $(hostname) - $(LC_TIME="en_DK.UTF-8" TZ=Asia/Shanghai date)"
+separator
+printf " Uptime: "
+uptime
+echo " Network address: $IPV4_ADDRESS / $IPV6_ADDRESS"
+echo " Disk Usage: $DISK_USAGE"
+separator
