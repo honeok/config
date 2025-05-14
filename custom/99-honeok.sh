@@ -7,7 +7,11 @@
 # Licensed under the MIT License.
 # This software is provided "as is", without any warranty.
 
-# /etc/update-motd.d/99-honeok
+# /etc/profile.d/99-honeok.sh
+
+# Usage:
+# apt-get update && apt-get install -y figlet toilet neofetch lolcat
+# ln -sf /usr/games/lolcat /usr/bin/lolcat
 
 IPV4_ADDRESS="$(curl -fsL -m 1 -4 "http://www.qualcomm.cn/cdn-cgi/trace" 2>/dev/null | awk -F'=' '/^ip=/ {print $2}' || echo Unknown)"
 IPV6_ADDRESS="$(curl -fsL -m 1 -6 "http://www.qualcomm.cn/cdn-cgi/trace" 2>/dev/null | awk -F'=' '/^ip=/ {print $2}' || echo Unknown)"
@@ -16,7 +20,7 @@ DISK_USAGE="$(df -h / | awk 'NR==2 {print $3 " / " $2}')"
 separator() { printf "%-70s\n" "-" | sed 's/\s/-/g'; }
 
 command -v toilet >/dev/null 2>&1 && toilet -f big -F gay "honeok"
-command -v neofetch >/dev/null 2>&1 && neofetch
+command -v neofetch >/dev/null 2>&1 && command -v lolcat >/dev/null 2>&1 && (neofetch | lolcat)
 
 echo "Welcome back honeok! - $(hostname) - $(LC_TIME="en_DK.UTF-8" TZ=Asia/Shanghai date)"
 separator
