@@ -13,8 +13,8 @@
 # apt-get update && apt-get install -y figlet toilet neofetch lolcat
 # ln -sf /usr/games/lolcat /usr/bin/lolcat
 
-IPV4_ADDRESS="$(curl -fsL -m 1 -4 "http://www.qualcomm.cn/cdn-cgi/trace" 2>/dev/null | awk -F'=' '/^ip=/ {print $2}' || echo Unknown)"
-IPV6_ADDRESS="$(curl -fsL -m 1 -6 "http://www.qualcomm.cn/cdn-cgi/trace" 2>/dev/null | awk -F'=' '/^ip=/ {print $2}' || echo Unknown)"
+IPV4_ADDRESS="$(curl -fsL -m 2 -4 "http://www.qualcomm.cn/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo Unknown)"
+IPV6_ADDRESS="$(curl -fsL -m 2 -6 "http://www.qualcomm.cn/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo Unknown)"
 DISK_USAGE="$(df -h / | awk 'NR==2 {print $3 " / " $2}')"
 
 separator() { printf "%-70s\n" "-" | sed 's/\s/-/g'; }
