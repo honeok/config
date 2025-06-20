@@ -165,7 +165,7 @@ fail2ban_config() {
     rm -f config/fail2ban/jail.d/sshd.conf >/dev/null 2>&1
 
     # 重载配置文件
-    docker exec -it fail2ban fail2ban-client reload
+    until docker exec -it fail2ban fail2ban-client reload >/dev/null 2>&1; do sleep 1; done
     sleep 5s
     separator
     docker exec -it fail2ban fail2ban-client status
