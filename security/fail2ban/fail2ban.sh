@@ -7,12 +7,16 @@
 # SPDX-License-Identifier: MIT
 
 # 当前脚本版本号
-readonly VERSION='v1.2.4 (2025.06.20)'
+readonly VERSION='v1.3.2 (2025.06.21)'
 
 # 环境变量用于在debian或ubuntu操作系统中设置非交互式 (noninteractive) 安装模式
 export DEBIAN_FRONTEND=noninteractive
 # 设置PATH环境变量
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
+
+# 设置系统UTF-8语言环境
+UTF8_LOCALE="$(locale -a 2>/dev/null | grep -iEm1 "UTF-8|utf8")"
+[ -n "$UTF8_LOCALE" ] && export LC_ALL="$UTF8_LOCALE" LANG="$UTF8_LOCALE" LANGUAGE="$UTF8_LOCALE"
 
 # 各变量默认值
 GITHUB_PROXY='https://ghproxy.badking.pp.ua/'
@@ -99,15 +103,39 @@ check_docker() {
 }
 
 cdn_check() {
-    [ -n "$GITHUB_PROXY" ] && \
-    curl --connect-timeout 5 -sL -w "%{http_code}" https://github.com/honeok/honeok/raw/master/README.md -o /dev/null 2>/dev/null | grep -q "^200$" && \
-    unset GITHUB_PROXY
+    local COUNTRY IPV4_ADDRESS IPV6_ADDRESS
+
+    # https://danwin1210.de/github-ipv6-proxy.php
+    ipv6_proxy() {
+        local -a HOST_ENTRIES
+        command cp -f /etc/hosts{,.bak}
+        HOST_ENTRIES=(
+            "2a01:4f8:c010:d56::2 github.com"
+            "2a01:4f8:c010:d56::3 api.github.com"
+            "2a01:4f8:c010:d56::4 codeload.github.com"
+            "2a01:4f8:c010:d56::5 objects.githubusercontent.com"
+            "2a01:4f8:c010:d56::6 ghcr.io"
+            "2a01:4f8:c010:d56::7 pkg.github.com npm.pkg.github.com maven.pkg.github.com nuget.pkg.github.com rubygems.pkg.github.com"
+            "2a01:4f8:c010:d56::8 uploads.github.com"
+        )
+        for ENTRY in "${HOST_ENTRIES[@]}"; do
+            echo "$ENTRY" >> /etc/hosts
+        done
+    }
+    COUNTRY="$(curl -sL -4 "https://www.qualcomm.cn/cdn-cgi/trace" | grep -i '^loc=' | cut -d'=' -f2 | grep .)"
+    IPV4_ADDRESS="$(curl -sL -4 "https://www.qualcomm.cn/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep .)"
+    IPV6_ADDRESS="$(curl -sL -6 "https://www.qualcomm.cn/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep .)"
+    if [ "$COUNTRY" != "CN" ] && [ -n "$IPV4_ADDRESS" ]; then
+        unset GITHUB_PROXY
+    elif [ "$COUNTRY" != "CN" ] && [ -z "$IPV4_ADDRESS" ] && [ -n "$IPV6_ADDRESS" ]; then
+        ipv6_proxy
+    fi
 }
 
 fail2ban_install() {
     local FAIL2BAN_VER
 
-    FAIL2BAN_VER="$(curl --retry 2 -sL "https://hub.docker.com/v2/repositories/linuxserver/fail2ban/tags" | grep -Po '"name":"\K[^"]+' | grep -vE 'rc|version|amd|arm|r2|ls|latest' | sort -V | tail -n1)"
+    FAIL2BAN_VER="$(curl --retry 2 --connect-timeout 5 --max-time 5 -sL "https://hub.docker.com/v2/repositories/linuxserver/fail2ban/tags" | grep -Po '"name":"\K[^"]+' | grep -vE 'rc|version|amd|arm|r2|ls|latest' | sort -V | tail -n1)"
     FAIL2BAN_VER="${FAIL2BAN_VER:-latest}"
 
     echo
@@ -119,7 +147,7 @@ fail2ban_install() {
     tee docker-compose.yml >/dev/null <<EOF
 services:
   fail2ban:
-    image: lscr.io/linuxserver/fail2ban:$FAIL2BAN_VER
+    image: linuxserver/fail2ban:$FAIL2BAN_VER
     container_name: fail2ban
     restart: unless-stopped
     environment:
@@ -157,10 +185,10 @@ fail2ban_config() {
     elif [ "$OS_NAME" = "almalinux" ] || [ "$OS_NAME" = "centos" ] || [ "$OS_NAME" = "fedora" ] || [ "$OS_NAME" = "rocky" ]; then
         curl --retry 2 -L -o config/fail2ban/jail.d/centos-ssh.conf "${GITHUB_PROXY}https://github.com/kejilion/config/raw/main/fail2ban/centos-ssh.conf"
     elif [ "$OS_NAME" = "debian" ] || [ "$OS_NAME" = "ubuntu" ]; then
-        ! dpkg -s rsyslog >/dev/null 2>&1 && pkg_install rsyslog && systemctl enable rsyslog --now
+        ! dpkg -s rsyslog >/dev/null 2>&1 && pkg_install rsyslog && systemctl enable rsyslog --now \
+            && touch /var/log/auth.log && chmod 640 /var/log/auth.log && chown root:adm /var/log/auth.log
         curl --retry 2 -L -o config/fail2ban/jail.d/linux-ssh.conf "${GITHUB_PROXY}https://github.com/honeok/config/raw/master/security/fail2ban/config/linux-ssh.conf"
         systemctl restart rsyslog
-        until [ -s /var/log/auth.log ]; do sleep 1; done
     fi
     rm -f config/fail2ban/jail.d/sshd.conf >/dev/null 2>&1
 
