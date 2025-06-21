@@ -1,6 +1,6 @@
-## custom
+# custom
 
-### .bashrc
+## .bashrc
 
 Description: This file is used to enhance the default .bashrc, add custom parameters.
 
@@ -9,11 +9,19 @@ cp ~/.bashrc{,.bak} && curl -Ls https://github.com/honeok/config/raw/master/cust
 . ~/.bashrc
 ```
 
-### 99-honeok.sh
+## 99-honeok.sh
 
 Description: This script is used custom MOTD showing hostname ip address disk usage and system uptime.
 
 ```shell
 curl -Ls https://github.com/honeok/config/raw/master/custom/99-honeok.sh -o /etc/profile.d/99-honeok.sh
 chmod +x /etc/profile.d/99-honeok.sh
+```
+
+## honeok.vim
+
+Description:
+
+```shell
+curl -Ls https://github.com/honeok/config/raw/master/custom/.vimrc -o ~/.vimrc
 ```
