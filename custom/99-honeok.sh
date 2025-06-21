@@ -1,20 +1,17 @@
 #!/usr/bin/env sh
 #
-# Description: custom MOTD showing hostname IP address disk usage and system uptime.
+# Description: This script is used custom MOTD showing hostname ip address disk usage and system uptime.
 #
-# Copyright (c) 2025 honeok <honeok@duck.com>
+# Copyright (c) 2025 honeok <honeok@disroot.org>
 #
-# Licensed under the MIT License.
-# This software is provided "as is", without any warranty.
-
-# /etc/profile.d/99-honeok.sh
+# SPDX-License-Identifier: MIT
 
 # Usage:
 # apt-get update && apt-get install -y figlet toilet neofetch lolcat
 # ln -sf /usr/games/lolcat /usr/bin/lolcat
 
-IPV4_ADDRESS="$(curl -fsL -m 2 -4 "http://www.qualcomm.cn/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo Unknown)"
-IPV6_ADDRESS="$(curl -fsL -m 2 -6 "http://www.qualcomm.cn/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo Unknown)"
+IPV4_ADDRESS="$(curl -Ls --max-time 2 -4 "https://www.qualcomm.cn/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo Unknown)"
+IPV6_ADDRESS="$(curl -Ls --max-time 2 -6 "https://www.qualcomm.cn/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo Unknown)"
 DISK_USAGE="$(df -h / | awk 'NR==2 {print $3 " / " $2}')"
 
 separator() { printf "%-70s\n" "-" | sed 's/\s/-/g'; }
