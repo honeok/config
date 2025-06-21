@@ -1,3 +1,6 @@
+# Copyright (c) 2025 honeok <honeok@disroot.org>
+# shellcheck disable=all
+
 syntax on " 启用语法高亮
 
 " 设置文件类型缩进
@@ -23,4 +26,4 @@ augroup custom_settings
     autocmd BufWritePre * call TrimWhitespace()
 augroup END
 
-filetype plugin indent on " 文件类型检测
+filetype plugin indent on
