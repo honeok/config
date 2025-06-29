@@ -6,9 +6,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-# https://www.graalvm.org/latest/reference-manual/ruby/UTF8Locale
-export LANG=en_US.UTF-8
-
 _red() { printf "\033[91m%s\033[0m\n" "$*"; }
 _green() { printf "\033[92m%s\033[0m\n" "$*"; }
 _yellow() { printf "\033[93m%s\033[0m\n" "$*"; }
@@ -17,18 +14,18 @@ _suc_msg() { printf "\033[42m\033[1mSuccess\033[0m %s\n" "$*"; }
 _info_msg() { printf "\033[43m\033[1mInfo\033[0m %s\n" "$*"; }
 
 # 各变量默认值
-GITHUB_PROXY='https://ghproxy.honeok.com/'
-CF_API='www.qualcomm.cn' # 备用 www.prologis.cn www.autodesk.com.cn www.keysight.com.cn
+GITHUB_PROXY='https://ghproxy.badking.pp.ua/'
 
-# curl默认参数
-declare -a CURL_OPTS=(--max-time 5 --retry 2 --retry-max-time 10)
+# 设置系统utf-8语言环境
+UTF8_LOCALE="$(locale -a 2>/dev/null | grep -iEm1 "UTF-8|utf8")"
+[ -n "$UTF8_LOCALE" ] && export LC_ALL="$UTF8_LOCALE" LANG="$UTF8_LOCALE" LANGUAGE="$UTF8_LOCALE"
 
 clrscr() {
-    ( [ -t 1 ] && tput clear 2>/dev/null ) || echo -e "\033[2J\033[H" || clear
+    ([ -t 1 ] && tput clear 2>/dev/null) || echo -e "\033[2J\033[H" || clear
 }
 
 die() {
-    _err_msg "$(_red "$@")" >&2; exit 1
+    _err_msg >&2 "$(_red "$@")"; exit 1
 }
 
 _exists() {
@@ -40,17 +37,26 @@ _exists() {
     fi
 }
 
-before_script() {
+# 确保root用户运行
+check_root() {
     if [ "$EUID" -ne 0 ] || [ "$(id -ru)" -ne 0 ]; then
         die "This script must be run as root!"
     fi
+}
+
+check_bash() {
+    local BASH_VER
+    BASH_VER="$(bash --version 2>/dev/null | head -n1 | awk '{print $4}' | cut -d. -f1)"
     if [ -z "$BASH_VERSION" ] || [ "$(basename "$0")" = "sh" ]; then
         die "This script needs to be run with bash, not sh!"
+    fi
+    if [[ "$BASH_VER" =~ ^[0-3]$ ]]; then
+        die "Bash version is lower than 4.0!"
     fi
 }
 
 check_cdn() {
-    local COUNTRY IP4 IP6
+    local COUNTRY IPV4_ADDRESS IPV6_ADDRESS
 
     # https://danwin1210.de/github-ipv6-proxy.php
     ipv6_proxy() {
@@ -69,51 +75,46 @@ check_cdn() {
             echo "$ENTRY" >> /etc/hosts
         done
     }
-
-    COUNTRY="$(curl "${CURL_OPTS[@]}" -fsL "https://$CF_API/cdn-cgi/trace" | grep -i '^loc=' | cut -d'=' -f2 | grep . || echo "")"
-    IP4="$(curl "${CURL_OPTS[@]}" -fsL -4 "https://$CF_API/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo "")"
-    IP6="$(curl "${CURL_OPTS[@]}" -fsL -6 "https://$CF_API/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo "")"
-
-    if [[ "$COUNTRY" != "CN" && -n "$IP4" ]]; then
+    COUNTRY="$(curl -m5 -Ls https://www.qualcomm.cn/cdn-cgi/trace | grep -i '^loc=' | cut -d'=' -f2 | grep .)"
+    IPV4_ADDRESS="$(curl -m5 -Ls -4 https://www.qualcomm.cn/cdn-cgi/trace | grep -i '^ip=' | cut -d'=' -f2 | grep .)"
+    IPV6_ADDRESS="$(curl -m5 -Ls -6 https://www.qualcomm.cn/cdn-cgi/trace | grep -i '^ip=' | cut -d'=' -f2 | grep .)"
+    if [ "$COUNTRY" != "CN" ] && [ -n "$IPV4_ADDRESS" ]; then
         unset GITHUB_PROXY
-    elif [[ "$COUNTRY" != "CN" && -z "$IP4" && -n "$IP6" ]]; then
+    elif [ "$COUNTRY" != "CN" ] && [ -z "$IPV4_ADDRESS" ] && [ -n "$IPV6_ADDRESS" ]; then
         ipv6_proxy
     fi
 }
 
 check_jq() {
-    ( ! _exists jq ) || die "jq already installed."
+    ! _exists jq || die "jq already installed."
 }
 
 install_jq() {
-    local JQ_VER JQ_FRAMEWORK
+    local JQ_VER OS_ARCH
 
-    _info_msg "$(_yellow "Installing the command!")"
-    JQ_VER="$(curl "${CURL_OPTS[@]}" -fsL "https://api.github.com/repos/jqlang/jq/releases/latest" | awk -F'"' '/"tag_name":/{print $4}')"
+    _info_msg "$(_yellow "Installing the jq command!")"
+    JQ_VER="$(curl --retry 2 -m5 -Ls https://api.github.com/repos/jqlang/jq/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
     JQ_VER="${JQ_VER:-jq-1.8.0}"
 
     case "$(uname -m)" in
-        i*86 ) JQ_FRAMEWORK="i386" ;;
-        x86_64 ) JQ_FRAMEWORK="amd64" ;;
-        armv6* ) JQ_FRAMEWORK="armel" ;;
-        armv7* ) JQ_FRAMEWORK="armhf" ;;
-        armv8* | arm64 | aarch64 ) JQ_FRAMEWORK="arm64" ;;
-        ppc64le ) JQ_FRAMEWORK="ppc64el" ;;
-        s390x ) JQ_FRAMEWORK="s390x" ;;
+        i*86 | x86 ) OS_ARCH="i386" ;;
+        x86_64 | x64 | amd64 ) OS_ARCH="amd64" ;;
+        armv6* ) OS_ARCH="armel" ;;
+        armv7* | arm ) OS_ARCH="armhf" ;;
+        armv8* | arm64 | aarch64 ) OS_ARCH="arm64" ;;
+        ppc64le ) OS_ARCH="ppc64el" ;;
+        s390x ) OS_ARCH="s390x" ;;
         * ) die "Unsupported architecture: $(uname -m)" ;;
     esac
 
-    curl --retry 2 -fsL -o /usr/bin/jq "${GITHUB_PROXY}https://github.com/jqlang/jq/releases/download/${JQ_VER}/jq-linux-${JQ_FRAMEWORK}"
+    curl --retry 2 -Ls -o /usr/bin/jq "${GITHUB_PROXY}https://github.com/jqlang/jq/releases/download/${JQ_VER}/jq-linux-${OS_ARCH}"
     [ ! -x /usr/bin/jq ] && chmod +x /usr/bin/jq
-    ( _exists jq && _suc_msg "$(_green "Download jq success!")" ) || die "Download jq failed."
+    (_exists jq && _suc_msg "$(_green "Download jq success!")" && jq --version 2>&1 | sed 's/jq-\(.*\)/jq version: \1/') || die "Download jq failed."
 }
 
-main() {
-    clrscr
-    before_script
-    check_jq
-    check_cdn
-    install_jq
-}
-
-main
+clrscr
+check_root
+check_bash
+check_jq
+check_cdn
+install_jq
