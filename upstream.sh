@@ -2,7 +2,7 @@
 #
 # Description: This script is used to set the upstream repository commit user.
 #
-# Copyright (c) 2025 honeok <honeok@disroot.org>
+# Copyright (c) 2025 honeok <i@honeok.com>
 #
 # SPDX-License-Identifier: MIT
 
