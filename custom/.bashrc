@@ -1,64 +1,61 @@
-# Copyright (c) 2025 honeok <honeok@disroot.org>
-# shellcheck disable=all
+# shellcheck disable=SC2148
+# Copyright (c) 2025 honeok <i@honeok.com>
 
-# ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
 
-# If not running interactively, don't do anything
+# 非交互模式下跳过执行
 [ -z "$PS1" ] && return
 
-export LC_ALL=en_US.utf8
-export LANG=en_US.utf8
+# 设置系统utf-8语言环境
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+# 环境变量用于在debian或ubuntu操作系统中设置非交互式 (noninteractive) 安装模式
 export DEBIAN_FRONTEND=noninteractive
 
-# don't put duplicate lines in the history. See bash(1) for more options
-# ... or force ignoredups and ignorespace
+# 命令历史忽略重复命令和以空格开头的命令
 HISTCONTROL=ignoredups:ignorespace
 
-# append to the history file, don't overwrite it
+# 让终端退出时将本次的命令历史追加到历史文件中而不是覆盖它
 shopt -s histappend
 
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+# 当前终端会话的内存中可以保留的命令数量
 HISTSIZE=1000
+# 保存在硬盘上的历史文件 ~/.bash_history 中的最大命令数量
 HISTFILESIZE=2000
 
-# timestamps in history
+# 为历史记录添加时间戳
 export HISTTIMEFORMAT='%F %T '
 
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
+# 自动更新终端窗口尺寸
 shopt -s checkwinsize   
 
-# make less more friendly for non-text input files, see lesspipe(1)
+# 配置less智能预览非文本文件
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
+# 设置chroot环境变量以显示在提示符
 if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
+    debian_chroot="$(cat /etc/debian_chroot)"
 fi
 
-# set a fancy prompt (non-color, unless we know we "want" color)
+# 启用彩色提示符 (针对xterm-color终端或256色终端)
 case "$TERM" in
-    xterm-color) color_prompt=yes;;
+    xterm-color|*-256color) color_prompt=yes ;;
 esac
 
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-#force_color_prompt=yes
+# 强制启用彩色提示符 （默认禁用, 如启用需取消注释)
+# force_color_prompt=yes
 
+# 检查终端是否支持彩色提示符
 if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-        # We have color support; assume it's compliant with Ecma-48
-        # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-        # a case would tend to support setf rather than setaf.)
+    if [ -x /usr/bin/tput ] && tput setaf >/dev/null 2>&1; then
         color_prompt=yes
     else
         color_prompt=
     fi
 fi
 
+# 设置提示符格式 (彩色或无色, 含chroot信息)
 if [ "$color_prompt" = yes ]; then
     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 else
@@ -66,7 +63,7 @@ else
 fi
 unset color_prompt force_color_prompt
 
-# If this is an xterm set the title to user@host:dir
+# 设置终端标题为user@host:dir (针对xterm/rxvt终端)
 case "$TERM" in
 xterm*|rxvt*)
     PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
@@ -75,55 +72,53 @@ xterm*|rxvt*)
     ;;
 esac
 
-# Note: PS1 and umask are already set in /etc/profile. You should not
-# need this unless you want different defaults for root.
+# 自定义root提示符和文件权限掩码 (默认由/etc/profile设置)
 # PS1='${debian_chroot:+($debian_chroot)}\h:\w\$ '
 # umask 022
 
 # You may uncomment the following lines if you want `ls' to be colorized:
 
-# enable color support for ls and define useful aliases
+# 启用ls和grep命令的彩色输出
 if [ -x /usr/bin/dircolors ]; then
-    # Load user dircolors if available, else fallback to system defaults
+    # 加载用户或系统默认颜色配置
     if [ -r ~/.dircolors ]; then
         eval "$(dircolors -b ~/.dircolors)"
     else
         eval "$(dircolors -b)"
     fi
 
-    # Aliases with color support
+    # 定义彩色输出别名
+    alias l='ls -CF --color=auto'
     alias ls='ls --color=auto'
+    alias ll='ls -alF --color=auto'
+    alias la='ls -A --color=auto'
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
 
-# Common ls aliases
-alias ll='ls -alF --color=auto'
-alias la='ls -A --color=auto'
-alias l='ls -CF --color=auto'
-#
-# Some more alias to avoid making mistakes:
+# 防止误操作的别名
 # alias rm='rm -i'
 # alias cp='cp -i'
 # alias mv='mv -i'
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
+# 加载用户自定义别名文件
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
 if [ -f ~/.bash_aliases ]; then
+    # shellcheck disable=SC1090
     . ~/.bash_aliases
 fi
 
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
+# 启用命令自动补全
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+    # shellcheck disable=SC1091
     . /etc/bash_completion
+elif [ -f /usr/share/bash-completion/bash_completion ] && ! shopt -oq posix; then
+    # shellcheck disable=SC1091
+    . /usr/share/bash-completion/bash_completion
 fi
 
+# 定义目录导航快捷别名
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
