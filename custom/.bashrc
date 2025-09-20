@@ -80,17 +80,13 @@ esac
 
 # 启用ls和grep命令的彩色输出
 if [ -x /usr/bin/dircolors ]; then
-    # 加载用户或系统默认颜色配置
-    if [ -r ~/.dircolors ]; then
-        eval "$(dircolors -b ~/.dircolors)"
-    else
-        eval "$(dircolors -b)"
-    fi
+    # shellcheck disable=SC2015
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)" # 加载用户或系统默认颜色配置
 
     # 定义彩色输出别名
-    alias l='ls -CF --color=auto'
+    alias l='ls -AC --color=auto'
     alias ls='ls --color=auto'
-    alias ll='ls -alF --color=auto'
+    alias ll='ls -Al --color=auto --time-style=long-iso'
     alias la='ls -A --color=auto'
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
