@@ -1,25 +1,30 @@
 #!/usr/bin/env sh
 #
-# Description: This script is used custom MOTD showing hostname ip address disk usage and system uptime.
+# Description: This script is used custom motd showing hostname ip address disk usage and system uptime.
 #
-# Copyright (c) 2025 honeok <honeok@disroot.org>
+# Copyright (c) 2025 honeok <i@honeok.com>
 #
 # SPDX-License-Identifier: MIT
 
 # Usage:
-# apt-get update && apt-get install -y figlet toilet neofetch lolcat
+# export DEBIAN_FRONTEND=noninteractive
+# apt-get update && apt-get install -y figlet lolcat neofetch toilet
 # ln -sf /usr/games/lolcat /usr/bin/lolcat
-
-IPV4_ADDRESS="$(curl -Ls --max-time 2 -4 "https://www.qualcomm.cn/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo Unknown)"
-IPV6_ADDRESS="$(curl -Ls --max-time 2 -6 "https://www.qualcomm.cn/cdn-cgi/trace" | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo Unknown)"
-DISK_USAGE="$(df -h / | awk 'NR==2 {print $3 " / " $2}')"
 
 separator() { printf "%-70s\n" "-" | sed 's/\s/-/g'; }
 
-command -v toilet >/dev/null 2>&1 && toilet -f big -F gay "honeok"
-command -v neofetch >/dev/null 2>&1 && command -v lolcat >/dev/null 2>&1 && (neofetch | lolcat)
+IPV4_ADDRESS="$(curl -kLs -m3 -4 http://www.qualcomm.cn/cdn-cgi/trace 2>/dev/null | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo Unknown)"
+IPV6_ADDRESS="$(curl -kLs -m3 -6 http://www.qualcomm.cn/cdn-cgi/trace 2>/dev/null | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo Unknown)"
+DISK_USAGE="$(df -h / 2>/dev/null | awk 'NR==2 {print $3 " / " $2}')"
 
-echo "Welcome back honeok! - $(hostname) - $(LC_TIME="en_DK.UTF-8" TZ=Asia/Shanghai date)"
+command -v toilet >/dev/null 2>&1 \
+    && toilet -f big -F gay "honeok"
+
+command -v neofetch >/dev/null 2>&1 \
+    && command -v lolcat >/dev/null 2>&1 \
+    && (neofetch | lolcat)
+
+echo "Welcome back honeok! - $(hostname 2>/dev/null) - $(LC_TIME="en_DK.UTF-8" TZ=Asia/Shanghai date 2>/dev/null)"
 separator
 printf " Uptime: "
 uptime
