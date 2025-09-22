@@ -5,7 +5,7 @@
 Description: This file is used to enhance the default .bashrc, add custom parameters.
 
 ```shell
-cp ~/.bashrc{,.bak} && curl -Ls https://github.com/honeok/config/raw/master/custom/.bashrc -o ~/.bashrc
+cp ~/.bashrc{,.bak} && curl -Ls https://github.com/honeok/config/raw/master/dotfiles/.bashrc -o ~/.bashrc
 . ~/.bashrc
 ```
 
@@ -14,6 +14,6 @@ cp ~/.bashrc{,.bak} && curl -Ls https://github.com/honeok/config/raw/master/cust
 Description: This script is used custom motd showing hostname ip address disk usage and system uptime.
 
 ```shell
-curl -Ls https://github.com/honeok/config/raw/master/custom/99-honeok.sh -o /etc/profile.d/99-honeok.sh
+curl -Ls https://github.com/honeok/config/raw/master/dotfiles/99-honeok.sh -o /etc/profile.d/99-honeok.sh
 chmod +x /etc/profile.d/99-honeok.sh
 ```
