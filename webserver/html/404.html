@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" style="height:100%; font-family: Arial, sans-serif;">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 Not Found</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: #fff;
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 18vw;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-size: 6vw;
+            margin: 10px 0;
+        }
+
+        p {
+            font-size: 4vw;
+            color: #666;
+            max-width: 600px;
+        }
+
+        @media (min-width: 600px) {
+            h1 {
+                font-size: 100px;
+            }
+
+            h2 {
+                font-size: 32px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #000;
+                color: #ccc;
+            }
+
+            p {
+                color: #aaa;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>404</h1>
+    <h2>Not Found</h2>
+    <p>The resource you are looking for could not be found on this server.</p>
+</body>
+
+</html>
