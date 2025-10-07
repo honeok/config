@@ -2,292 +2,292 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon"
-        href="https://m.360buyimg.com/i/jfs/t1/339155/27/4432/19587/68b40e40F011d275d/2347ed41810855e1.jpg" />
-    <title>IP 地址查询</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #d9e7f3 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon"
+    href="https://m.360buyimg.com/i/jfs/t1/339155/27/4432/19587/68b40e40F011d275d/2347ed41810855e1.jpg" />
+  <title>IP 地址查询</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #d9e7f3 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        /* IP Results Container */
-        #ipResultsContainer {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            margin: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 600px;
-        }
+    /* IP Results Container */
+    #ipResultsContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      margin: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+    }
 
-        #ipResultsContainer h3 {
-            text-align: center;
-            width: 100%;
-            margin: 5px 0 0;
-            font-size: 1.2rem;
-            color: #333;
-        }
+    #ipResultsContainer h3 {
+      text-align: center;
+      width: 100%;
+      margin: 5px 0 0;
+      font-size: 1.2rem;
+      color: #333;
+    }
 
-        /* Table Styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-        }
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
 
-        tr {
-            transition: all 0.3s ease;
-        }
+    tr {
+      transition: all 0.3s ease;
+    }
 
-        th,
-        td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
+    th,
+    td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
 
-        tr:last-child td,
-        tr:last-child th {
-            border-bottom: none;
-        }
+    tr:last-child td,
+    tr:last-child th {
+      border-bottom: none;
+    }
 
-        th {
-            font-weight: 600;
-            color: #444;
-        }
+    th {
+      font-weight: 600;
+      color: #444;
+    }
 
-        .ipregion {
-            white-space: nowrap;
-            font-weight: 900;
-            font-size: 1rem;
-            width: 15%;
-        }
+    .ipregion {
+      white-space: nowrap;
+      font-weight: 900;
+      font-size: 1rem;
+      width: 15%;
+    }
 
-        .apiserver {
-            white-space: nowrap;
-            color: #888;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
+    .apiserver {
+      white-space: nowrap;
+      color: #888;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
 
-        .ip {
-            white-space: nowrap;
-            font-weight: 500;
-            color: #333;
-            font-size: 0.875rem;
-        }
+    .ip {
+      white-space: nowrap;
+      font-weight: 500;
+      color: #333;
+      font-size: 0.875rem;
+    }
 
-        .ipaddr {
-            color: #1f2937;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 200px;
-        }
+    .ipaddr {
+      color: #1f2937;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
 
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            #ipResultsContainer {
-                margin: 10px;
-                width: calc(100% - 20px);
-                max-width: none;
-                position: relative;
-                box-sizing: border-box;
-                padding: 12px;
-            }
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      #ipResultsContainer {
+        margin: 10px;
+        width: calc(100% - 20px);
+        max-width: none;
+        position: relative;
+        box-sizing: border-box;
+        padding: 12px;
+      }
 
-            #ipResultsContainer h3 {
-                margin-bottom: 10px;
-                font-size: 1.2rem;
-            }
+      #ipResultsContainer h3 {
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+      }
 
-            table {
-                margin-top: 10px;
-            }
+      table {
+        margin-top: 10px;
+      }
 
-            table,
-            tbody {
-                display: block;
-                width: 100%;
-            }
+      table,
+      tbody {
+        display: block;
+        width: 100%;
+      }
 
-            tr {
-                display: grid;
-                grid-template-areas:
-                    "region apiserver"
-                    "ip ip"
-                    "addr addr";
-                grid-template-columns: auto 1fr;
-                background-color: #f9f9f9;
-                margin-bottom: 10px;
-            }
+      tr {
+        display: grid;
+        grid-template-areas:
+          "region apiserver"
+          "ip ip"
+          "addr addr";
+        grid-template-columns: auto 1fr;
+        background-color: #f9f9f9;
+        margin-bottom: 10px;
+      }
 
-            td,
-            th {
-                display: block;
-                border: none;
-                padding: 6px 8px;
-            }
+      td,
+      th {
+        display: block;
+        border: none;
+        padding: 6px 8px;
+      }
 
-            td.ip {
-                padding: 3px 8px 0;
-            }
+      td.ip {
+        padding: 3px 8px 0;
+      }
 
-            .ipregion {
-                grid-area: region;
-                font-size: 0.75rem;
-                padding-right: 0;
-                display: flex;
-                align-items: center;
-            }
+      .ipregion {
+        grid-area: region;
+        font-size: 0.75rem;
+        padding-right: 0;
+        display: flex;
+        align-items: center;
+      }
 
-            .apiserver {
-                grid-area: apiserver;
-                text-align: right;
-                font-size: 0.7rem;
-                color: #666;
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-            }
+      .apiserver {
+        grid-area: apiserver;
+        text-align: right;
+        font-size: 0.7rem;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+      }
 
-            .ip {
-                grid-area: ip;
-                font-size: 0.875rem;
-                text-align: left;
-            }
+      .ip {
+        grid-area: ip;
+        font-size: 0.875rem;
+        text-align: left;
+      }
 
-            .ipaddr {
-                grid-area: addr;
-                font-size: 0.75rem;
-                max-width: none;
-                text-align: left;
-                color: #666;
-                border-bottom: 1px solid #c4c1c1;
-            }
-        }
-    </style>
+      .ipaddr {
+        grid-area: addr;
+        font-size: 0.75rem;
+        max-width: none;
+        text-align: left;
+        color: #666;
+        border-bottom: 1px solid #c4c1c1;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div id="ipResultsContainer">
-        <h3>IP 地址查询</h3>
-        <table>
-            <tbody></tbody>
-        </table>
-    </div>
-    <script>
-        const ipProviders = [{
-            region: '国内',
-            apiserver: 'ipip.net',
-            url: 'https://myip.ipip.net/json',
-            ip: d => d.data?.ip || '未知',
-            addr: d => d.data?.location ? `${d.data.location[0]} ${d.data.location[1]} ${d.data.location[2]} ${d.data.location[4]}` : '未知'
-        }, {
-            region: '国内',
-            apiserver: '百度智能云',
-            url: 'https://qifu-api.baidubce.com/ip/local/geo/v1/district',
-            ip: d => d.ip || '未知',
-            addr: d => d.data ? `${d.data.country} ${d.data.prov} ${d.data.city} ${d.data.district} ${d.data.isp} ${d.data.zipcode}` : '未知'
-        }, {
-            region: '国外',
-            apiserver: 'ipbase.com',
-            url: 'https://api.ipbase.com/v1/json/',
-            ip: d => d.ip || '未知',
-            addr: d => d.country_name ? `${d.country_name} ${d.city || ''}`.trim() : '未知'
-        }, {
-            region: '国外',
-            apiserver: 'ipwhois.app',
-            url: 'https://ipwhois.app/json/',
-            ip: d => d.ip || '未知',
-            addr: d => d.country ? `${d.country} ${d.city || ''} ${d.isp || ''}`.trim() : '未知'
-        }, {
-            region: '国外',
-            apiserver: 'ipinfo.io',
-            url: 'https://ipinfo.io/json',
-            ip: d => d.ip || '未知',
-            addr: d => d.region ? `${d.region} ${d.org}` : '未知'
-        }];
+  <div id="ipResultsContainer">
+    <h3>IP 地址查询</h3>
+    <table>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script>
+    const ipProviders = [{
+      region: '国内',
+      apiserver: 'ipip.net',
+      url: 'https://myip.ipip.net/json',
+      ip: d => d.data?.ip || '未知',
+      addr: d => d.data?.location ? `${d.data.location[0]} ${d.data.location[1]} ${d.data.location[2]} ${d.data.location[4]}` : '未知'
+    }, {
+      region: '国内',
+      apiserver: '百度智能云',
+      url: 'https://qifu-api.baidubce.com/ip/local/geo/v1/district',
+      ip: d => d.ip || '未知',
+      addr: d => d.data ? `${d.data.country} ${d.data.prov} ${d.data.city} ${d.data.district} ${d.data.isp} ${d.data.zipcode}` : '未知'
+    }, {
+      region: '国外',
+      apiserver: 'ipbase.com',
+      url: 'https://api.ipbase.com/v1/json/',
+      ip: d => d.ip || '未知',
+      addr: d => d.country_name ? `${d.country_name} ${d.city || ''}`.trim() : '未知'
+    }, {
+      region: '国外',
+      apiserver: 'ipwhois.app',
+      url: 'https://ipwhois.app/json/',
+      ip: d => d.ip || '未知',
+      addr: d => d.country ? `${d.country} ${d.city || ''} ${d.isp || ''}`.trim() : '未知'
+    }, {
+      region: '国外',
+      apiserver: 'ipinfo.io',
+      url: 'https://ipinfo.io/json',
+      ip: d => d.ip || '未知',
+      addr: d => d.region ? `${d.region} ${d.org}` : '未知'
+    }];
 
-        const tableBody = document.querySelector('#ipResultsContainer table tbody');
+    const tableBody = document.querySelector('#ipResultsContainer table tbody');
 
-        function initializeTable() {
-            tableBody.innerHTML = ''; // Clear table before initialization
-            ipProviders.forEach(provider => {
-                const row = document.createElement('tr');
-                row.dataset.apiserver = provider.apiserver;
+    function initializeTable() {
+      tableBody.innerHTML = ''; // Clear table before initialization
+      ipProviders.forEach(provider => {
+        const row = document.createElement('tr');
+        row.dataset.apiserver = provider.apiserver;
 
-                const regionCell = document.createElement('th');
-                regionCell.textContent = provider.region;
-                regionCell.classList.add('ipregion');
-                row.appendChild(regionCell);
+        const regionCell = document.createElement('th');
+        regionCell.textContent = provider.region;
+        regionCell.classList.add('ipregion');
+        row.appendChild(regionCell);
 
-                const apiServerCell = document.createElement('td');
-                apiServerCell.textContent = provider.apiserver;
-                apiServerCell.classList.add('apiserver');
-                row.appendChild(apiServerCell);
+        const apiServerCell = document.createElement('td');
+        apiServerCell.textContent = provider.apiserver;
+        apiServerCell.classList.add('apiserver');
+        row.appendChild(apiServerCell);
 
-                const ipCell = document.createElement('td');
-                ipCell.textContent = '获取中...';
-                ipCell.classList.add('ip');
-                row.appendChild(ipCell);
+        const ipCell = document.createElement('td');
+        ipCell.textContent = '获取中...';
+        ipCell.classList.add('ip');
+        row.appendChild(ipCell);
 
-                const addrCell = document.createElement('td');
-                addrCell.classList.add('ipaddr');
-                row.appendChild(addrCell);
+        const addrCell = document.createElement('td');
+        addrCell.classList.add('ipaddr');
+        row.appendChild(addrCell);
 
-                tableBody.appendChild(row);
-            });
-        }
+        tableBody.appendChild(row);
+      });
+    }
 
-        async function fetchIP(provider) {
-            const row = tableBody.querySelector(`tr[data-apiserver="${provider.apiserver}"]`);
-            if (!row) return;
-            const ipCell = row.querySelector('.ip');
-            const addrCell = row.querySelector('.ipaddr');
+    async function fetchIP(provider) {
+      const row = tableBody.querySelector(`tr[data-apiserver="${provider.apiserver}"]`);
+      if (!row) return;
+      const ipCell = row.querySelector('.ip');
+      const addrCell = row.querySelector('.ipaddr');
 
-            try {
-                const res = await fetch(provider.url, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-                const data = await res.json();
-                ipCell.textContent = provider.ip(data);
-                addrCell.textContent = provider.addr(data);
-            } catch (error) {
-                console.error(`Error fetching from ${provider.apiserver}:`, error);
-                ipCell.textContent = '查询失败';
-                addrCell.textContent = '查询失败';
-            }
-        }
+      try {
+        const res = await fetch(provider.url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+        const data = await res.json();
+        ipCell.textContent = provider.ip(data);
+        addrCell.textContent = provider.addr(data);
+      } catch (error) {
+        console.error(`Error fetching from ${provider.apiserver}:`, error);
+        ipCell.textContent = '查询失败';
+        addrCell.textContent = '查询失败';
+      }
+    }
 
-        (async () => {
-            initializeTable();
-            const requests = ipProviders.map(provider => fetchIP(provider));
-            await Promise.allSettled(requests);
-        })();
-    </script>
+    (async () => {
+      initializeTable();
+      const requests = ipProviders.map(provider => fetchIP(provider));
+      await Promise.allSettled(requests);
+    })();
+  </script>
 </body>
 
 </html>
