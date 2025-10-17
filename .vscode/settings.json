@@ -8,6 +8,5 @@
   "git.alwaysSignOff": true,
   "[dockerfile]": {
     "editor.formatOnSave": false
-  },
-  "yaml.format.singleQuotes": true
+  }
 }
