@@ -5,15 +5,33 @@ root = true
 [*]
 charset = utf-8
 end_of_line = lf
-indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
+max_line_length = 120
 
-[*.sh,webserver/**/*.conf]
+[{*.{go,mk},*[Mm]akefile*}]
+indent_style = tab
 indent_size = 4
 
-[*.{html,json,yml,yaml}]
+[{*.{awk,c,cpp,h,ini,java,lua,php,pl,py,sh},*[Dd]ockerfile*}]
+indent_style = space
+indent_size = 4
+
+[*.{css,html,js,json,ts,tsx,vue,xml,yaml}]
+indent_style = space
 indent_size = 2
+
+[*.{bat,cmd}]
+end_of_line = crlf
+indent_style = space
+indent_size = 4
+
+[*.ps1]
+charset = utf-8-bom
+end_of_line = crlf
+indent_style = space
+indent_size = 4
 
 [*.md]
 trim_trailing_whitespace = false
+max_line_length = off
