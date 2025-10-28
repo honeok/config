@@ -3,10 +3,8 @@
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
   "editor.useEditorConfig": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "workbench.colorTheme": "Default Dark Modern",
   "git.enableSmartCommit": true,
-  "git.alwaysSignOff": true,
-  "[dockerfile]": {
-    "editor.formatOnSave": false
-  }
+  "git.alwaysSignOff": true
 }
