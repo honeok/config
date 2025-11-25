@@ -1,29 +1,57 @@
-#!/usr/bin/env bash
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+#
+# Description: This script is a tool for distributing and sync files and scripts across a kafka cluster.
+# Copyright (c) 2021 atguigu https://www.atguigu.com
+# Copyright (c) 2025 honeok <i@honeok.com>
 
-if [ "$#" -lt 1 ]; then
-    echo "Not enough arguments!"; exit 1
+# Usage:
+# curl -Ls https://github.com/honeok/config/raw/master/bigdata/kafka/xsync -o /usr/local/bin/xsync
+
+set -eEu
+
+# 若 export FORCE_SYNC=1 则开启delete模式
+RSYNC_OPTS="-av"
+if [ "${FORCE_SYNC:-0}" -eq 1 ]; then
+    RSYNC_OPTS="-av --delete"
 fi
 
-HOSTS=(kafka01 kafka02 kafka03)
+# 主机清单
+HOSTS=(hadoop102 hadoop103 hadoop104)
 
-# 遍历集群中的所有机器
-for host in "${HOSTS[@]}"; do
-    echo "===================  $host  ==================="
+separator() { printf '%.0s-' {1..10}; }
+
+_exists() {
+    command -v "$@" >/dev/null 2>&1
+}
+
+die() {
+    echo >&2 "Error: $*"; exit 1
+}
+
+if [ "$#" -lt 1 ]; then
+    die "Not enough arguments."
+fi
+
+if _exists rsync; then
+    die "rsync command not found."
+fi
+
+for h in "${HOSTS[@]}"; do
+    printf "%s %s %s\n" "$(separator)" "$h" "$(separator)"
 
     # 遍历所有提供的文件参数
-    for file in "$@"; do
-        if [ -e "$file" ]; then
-            # 获取绝对父目录路径
-            pdir=$(cd -P "$(dirname "$file")" && pwd)
-            # 获取文件名
-            fname=$(basename "$file")
+    for f in "$@"; do
+        if [ -e "$f" ]; then
+            SRC_DIR="$(cd -P "$(dirname "$f")"; pwd)"
+            FILE_NAME="$(basename "$f")"
 
-            # 在远程主机上创建目录（如果不存在）
-            ssh "$host" "mkdir -p $pdir"
+            # 在远程主机上创建目录
+            ssh -o BatchMode=yes -o ConnectTimeout=5 "$h" "mkdir -p \"$SRC_DIR\"" || die "Failed to create directory $SRC_DIR on $h"
             # 将文件同步到远程主机
-            rsync -av "$pdir/$fname" "$host:$pdir"
+            rsync "$RSYNC_OPTS" "$SRC_DIR/$FILE_NAME" "$h:$SRC_DIR"
         else
-            echo "$file does not exist!"
+            die "$f does not exist."
         fi
     done
 done
