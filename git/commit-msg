@@ -1,0 +1,16 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+#
+# Description: This script runs during git commit to validate the commit message and exit non-zero to block the commit if invalid.
+# Copyright (c) 2025 honeok <i@honeok.com>
+
+# Usage:
+# Install to .git/hooks/commit-msg
+
+test "" = "$(grep '^Signed-off-by: ' "$1" |
+    sort | uniq -c | sed -e '/^[   ]*1[    ]/d')" || {
+    echo >&2 "Duplicate Signed-off-by lines."
+    exit 1
+}
+
+exit 0
