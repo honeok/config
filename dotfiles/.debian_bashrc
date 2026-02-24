@@ -28,7 +28,7 @@ HISTFILESIZE=2000
 export HISTTIMEFORMAT='%F %T '
 
 # 自动更新终端窗口尺寸
-shopt -s checkwinsize   
+shopt -s checkwinsize
 
 # 配置less智能预览非文本文件
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"

@@ -1,14 +1,21 @@
 <div align="center">
-  <img src="./assets/terminal.png" alt="Logo" width="250" />
+  <img src="https://fastly.jsdelivr.net/gh/jglovier/dotfiles-logo@main/dotfiles-logo.png" alt="Logo" width="450" />
 </div>
-<h1 align="center">Dotfiles</h1>
 
 ## .bashrc
 
 Description: This file is used to enhance the default .bashrc, add custom parameters.
 
 ```shell
-cp ~/.bashrc{,.bak} && curl -Ls https://github.com/honeok/config/raw/master/dotfiles/.bashrc -o ~/.bashrc
+cp ~/.bashrc{,.bak}
+```
+
+```
+# Debian
+curl -Ls https://github.com/honeok/config/raw/master/dotfiles/.debian_bashrc -o ~/.bashrc
+```
+
+```
 . ~/.bashrc
 ```
 
