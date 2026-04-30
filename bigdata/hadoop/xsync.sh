@@ -1,44 +1,48 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 #
 # Description: This script is a tool for distributing and sync files and scripts across a kafka cluster.
 # Copyright (c) 2021 atguigu https://www.atguigu.com
-# Copyright (c) 2025 honeok <i@honeok.com>
+# Copyright (c) 2025-2026 honeok <i@honeok.com>
 
 # Usage:
 # curl -Ls https://github.com/honeok/config/raw/master/bigdata/kafka/xsync.sh -o /usr/local/bin/xsync
 
 set -eEu
 
-SSH_PORT="22"
-SSH_OPTS="-o BatchMode=yes -o ConnectTimeout=5"
+# 设置PATH环境变量
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
 
-# 若 export FORCE_SYNC=1 则开启delete模式
-RSYNC_OPTS="-av"
-if [ "${FORCE_SYNC:-0}" -eq 1 ]; then
-    RSYNC_OPTS="-av --delete"
-fi
+: "${SSH_PORT:="22"}"
+: "${SSH_OPTS:="-o BatchMode=yes -o ConnectTimeout=5"}"
+: "${RSYNC_OPTS:="-av"}"
 
 # 主机清单
 HOSTS=(hadoop102 hadoop103 hadoop104)
 
+# 分割线
 separator() {
     printf '%.0s-' {1..10}
 }
 
-_exists() {
-    command -v "$@" >/dev/null 2>&1
+die() {
+    echo >&2 "Error: $*"
+    exit 1
 }
 
-die() {
-    echo >&2 "Error: $*"; exit 1
+get_cmd_path() {
+    type -f -p "$1"
+}
+
+is_have_cmd() {
+    get_cmd_path "$1" > /dev/null 2>&1
 }
 
 if [ "$#" -lt 1 ]; then
     die "Not enough arguments."
 fi
 
-_exists rsync || die "rsync Command not found."
+is_have_cmd rsync || die "Command not found."
 
 for h in "${HOSTS[@]}"; do
     printf "%s %s %s\n" "$(separator)" "$h" "$(separator)"
@@ -46,7 +50,10 @@ for h in "${HOSTS[@]}"; do
     # 遍历所有提供的文件参数
     for f in "$@"; do
         if [ -e "$f" ]; then
-            SRC_DIR="$(cd -P "$(dirname "$f")"; pwd)"
+            SRC_DIR="$(
+                cd -P "$(dirname "$f")"
+                pwd
+            )"
             FILE_NAME="$(basename "$f")"
 
             # 在远程主机上创建目录
@@ -58,5 +65,3 @@ for h in "${HOSTS[@]}"; do
         fi
     done
 done
-
-echo "success"
