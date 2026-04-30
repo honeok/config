@@ -6,7 +6,7 @@
 # Copyright (c) 2025-2026 honeok <i@honeok.com>
 
 # Usage:
-# curl -Ls https://github.com/honeok/config/raw/master/bigdata/kafka/xsync.sh -o /usr/local/bin/xsync
+# curl -Ls https://github.com/honeok/config/raw/master/bigdata/hadoop/xsync.sh -o /usr/local/bin/xsync
 
 set -eEu
 
