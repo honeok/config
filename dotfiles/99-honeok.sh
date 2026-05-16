@@ -18,11 +18,6 @@ unset XAUTHORITY      # 删除 X11 认证文件路径变量
 
 set -eE
 
-# 各变量默认值
-IPV4_ADDRESS="$(curl -Ls -4 http://www.qualcomm.cn/cdn-cgi/trace 2> /dev/null | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo "Unknown")"
-IPV6_ADDRESS="$(curl -Ls -6 http://www.qualcomm.cn/cdn-cgi/trace 2> /dev/null | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo "Unknown")"
-DISK_USAGE="$(df -h / 2> /dev/null | awk 'NR==2 {print $3 " / " $2}')"
-
 # 分隔符
 separator() {
     printf "%-70s\n" "-" | sed 's/\s/-/g'
@@ -56,6 +51,11 @@ curl() {
         sleep 0.5
     done
 }
+
+# 各变量默认值
+IPV4_ADDRESS="$(curl -Ls -4 http://www.qualcomm.cn/cdn-cgi/trace 2> /dev/null | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo "Unknown")"
+IPV6_ADDRESS="$(curl -Ls -6 http://www.qualcomm.cn/cdn-cgi/trace 2> /dev/null | grep -i '^ip=' | cut -d'=' -f2 | grep . || echo "Unknown")"
+DISK_USAGE="$(df -h / 2> /dev/null | awk 'NR==2 {print $3 " / " $2}')"
 
 # if is_have_cmd toilet; then
 #     toilet -f big -F gay "honeok"
