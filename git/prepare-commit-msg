@@ -11,7 +11,7 @@ COMMIT_MSG_FILE="$1"
 COMMIT_SOURCE="$2"
 
 case "$COMMIT_SOURCE" in
-    merge|squash|rebase|template|commit) exit 0 ;;
+merge | squash | rebase | template | commit) exit 0 ;;
 esac
 
 SOB="$(git var GIT_COMMITTER_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')"
