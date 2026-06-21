@@ -29,15 +29,20 @@ separator() {
 }
 
 die() {
-    _err_msg >&2 "$(_red "$@")"; exit 1
+    _err_msg >&2 "$(_red "$@")"
+    exit 1
 }
 
 _exists() {
     local _CMD="$1"
-    if type "$_CMD" >/dev/null 2>&1; then return;
-    elif command -v "$_CMD" >/dev/null 2>&1; then return;
-    elif which "$_CMD" >/dev/null 2>&1; then return;
-    else return 1;
+    if type "$_CMD" > /dev/null 2>&1; then
+        return
+    elif command -v "$_CMD" > /dev/null 2>&1; then
+        return
+    elif which "$_CMD" > /dev/null 2>&1; then
+        return
+    else
+        return 1
     fi
 }
 
@@ -72,7 +77,7 @@ check_cmd() {
 
 check_sshkey() {
     if [ ! -f "$SSHKEY_PATH" ]; then
-        ssh-keygen -t ed25519 -f "$SSHKEY_PATH" -P '' >/dev/null 2>&1
+        ssh-keygen -t ed25519 -f "$SSHKEY_PATH" -P '' > /dev/null 2>&1
     fi
 }
 

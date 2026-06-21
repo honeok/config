@@ -15,7 +15,7 @@ export DEBIAN_FRONTEND=noninteractive
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
 
 # 设置系统UTF-8语言环境
-UTF8_LOCALE="$(locale -a 2>/dev/null | grep -iEm1 "UTF-8|utf8")"
+UTF8_LOCALE="$(locale -a 2> /dev/null | grep -iEm1 "UTF-8|utf8")"
 [ -n "$UTF8_LOCALE" ] && export LC_ALL="$UTF8_LOCALE" LANG="$UTF8_LOCALE" LANGUAGE="$UTF8_LOCALE"
 
 # 各变量默认值
@@ -37,12 +37,13 @@ separator() { printf "%-25s\n" "-" | sed 's/\s/-/g'; }
 
 # 打印错误信息并退出
 die() {
-    _err_msg >&2 "$(_red "$@")"; exit 1
+    _err_msg >&2 "$(_red "$@")"
+    exit 1
 }
 
 # 安全清屏函数
 clrscr() {
-    ([ -t 1 ] && tput clear 2>/dev/null) || echo -e "\033[2J\033[H" || clear
+    ([ -t 1 ] && tput clear 2> /dev/null) || echo -e "\033[2J\033[H" || clear
 }
 
 reading() {
@@ -54,10 +55,14 @@ reading() {
 # 用于判断命令是否存在
 _exists() {
     local _CMD="$1"
-    if type "$_CMD" >/dev/null 2>&1; then return 0
-    elif command -v "$_CMD" >/dev/null 2>&1; then return 0
-    elif which "$_CMD" >/dev/null 2>&1; then return 0
-    else return 1
+    if type "$_CMD" > /dev/null 2>&1; then
+        return 0
+    elif command -v "$_CMD" > /dev/null 2>&1; then
+        return 0
+    elif which "$_CMD" > /dev/null 2>&1; then
+        return 0
+    else
+        return 1
     fi
 }
 
@@ -90,10 +95,10 @@ check_root() {
 }
 
 check_os() {
-    if [ "$OS_NAME" != "almalinux" ] && [ "$OS_NAME" != "alpine" ] \
-        && [ "$OS_NAME" != "centos" ] && [ "$OS_NAME" != "debian" ] \
-        && [ "$OS_NAME" != "fedora" ] && [ "$OS_NAME" != "rocky" ] \
-        && [ "$OS_NAME" != "ubuntu" ]; then
+    if [ "$OS_NAME" != "almalinux" ] && [ "$OS_NAME" != "alpine" ] &&
+        [ "$OS_NAME" != "centos" ] && [ "$OS_NAME" != "debian" ] &&
+        [ "$OS_NAME" != "fedora" ] && [ "$OS_NAME" != "rocky" ] &&
+        [ "$OS_NAME" != "ubuntu" ]; then
         die "System is not supported."
     fi
 }
@@ -140,11 +145,11 @@ fail2ban_install() {
 
     echo
     # 卸载本机fail2ban
-    _exists fail2ban-client && pkg_uninstall fail2ban && rm -rf /etc/fail2ban >/dev/null 2>&1
+    _exists fail2ban-client && pkg_uninstall fail2ban && rm -rf /etc/fail2ban > /dev/null 2>&1
     _info_msg "$(_yellow "Installing fail2ban.")"
-    mkdir -p "$FAIL2BAN_DIR" >/dev/null 2>&1
-    cd "$FAIL2BAN_DIR" >/dev/null 2>&1 || die "No permission or wrong path."
-    tee docker-compose.yml >/dev/null <<EOF
+    mkdir -p "$FAIL2BAN_DIR" > /dev/null 2>&1
+    cd "$FAIL2BAN_DIR" > /dev/null 2>&1 || die "No permission or wrong path."
+    tee docker-compose.yml > /dev/null << EOF
 services:
   fail2ban:
     image: linuxserver/fail2ban:$FAIL2BAN_VER
@@ -169,9 +174,9 @@ EOF
 fail2ban_uninstall() {
     echo
     _info_msg "$(_yellow "Uninstalling fail2ban.")"
-    cd "${FAIL2BAN_DIR:?}" >/dev/null 2>&1 || die "No permission or wrong path."
+    cd "${FAIL2BAN_DIR:?}" > /dev/null 2>&1 || die "No permission or wrong path."
     docker compose down -t 0 --rmi all --volumes
-    rm -rf "${FAIL2BAN_DIR:?}" >/dev/null 2>&1 && _suc_msg "$(_green "Uninstall fail2ban successfully.")"
+    rm -rf "${FAIL2BAN_DIR:?}" > /dev/null 2>&1 && _suc_msg "$(_green "Uninstall fail2ban successfully.")"
 }
 
 fail2ban_config() {
@@ -185,15 +190,15 @@ fail2ban_config() {
     elif [ "$OS_NAME" = "almalinux" ] || [ "$OS_NAME" = "centos" ] || [ "$OS_NAME" = "fedora" ] || [ "$OS_NAME" = "rocky" ]; then
         curl --retry 2 -L -o config/fail2ban/jail.d/centos-ssh.conf "${GITHUB_PROXY}https://github.com/kejilion/config/raw/main/fail2ban/centos-ssh.conf"
     elif [ "$OS_NAME" = "debian" ] || [ "$OS_NAME" = "ubuntu" ]; then
-        ! dpkg -s rsyslog >/dev/null 2>&1 && pkg_install rsyslog && systemctl enable rsyslog --now \
-            && touch /var/log/auth.log && chmod 640 /var/log/auth.log && chown root:adm /var/log/auth.log
+        ! dpkg -s rsyslog > /dev/null 2>&1 && pkg_install rsyslog && systemctl enable rsyslog --now &&
+            touch /var/log/auth.log && chmod 640 /var/log/auth.log && chown root:adm /var/log/auth.log
         curl --retry 2 -L -o config/fail2ban/jail.d/linux-ssh.conf "${GITHUB_PROXY}https://github.com/honeok/config/raw/master/security/fail2ban/config/linux-ssh.conf"
         systemctl restart rsyslog
     fi
-    rm -f config/fail2ban/jail.d/sshd.conf >/dev/null 2>&1
+    rm -f config/fail2ban/jail.d/sshd.conf > /dev/null 2>&1
 
     # 重载配置文件
-    until docker exec -it fail2ban fail2ban-client reload >/dev/null 2>&1; do sleep 1; done
+    until docker exec -it fail2ban fail2ban-client reload > /dev/null 2>&1; do sleep 1; done
     sleep 5s
     separator
     docker exec -it fail2ban fail2ban-client status
@@ -209,23 +214,23 @@ ssh_bruteforce() {
     echo
     if [ "$OS_NAME" = "almalinux" ] || [ "$OS_NAME" = "centos" ] || [ "$OS_NAME" = "fedora" ] || [ "$OS_NAME" = "rocky" ]; then
         SSH_SVCNAME="sshd"
-    elif [ "$OS_NAME" = "debian" ] || [ "$OS_NAME" = "ubuntu" ];then
+    elif [ "$OS_NAME" = "debian" ] || [ "$OS_NAME" = "ubuntu" ]; then
         SSH_SVCNAME="ssh"
     fi
 
     printf "%-8s %-16s %-7s %-15s %-30s\n" "Attempts" "IP Address" "Country" "Region" "ISP"
     echo "-------- ---------------- ------- --------------- ------------------------------"
-    journalctl -u "$SSH_SVCNAME" --since "$SINCE" | grep -i "Failed password" | \
-    awk '{for(i=1;i<=NF;i++) if($i=="from") print $(i+1)}' | \
-    sort | uniq -c | sort -nr | awk '{$1=$1; print}' | \
-    while read -r COUNT IP; do
-        # 恶意ip归属地查询
-        IPINFO="$(curl -sL --retry 10 "https://ipinfo.io/$IP/json")"
-        COUNTRY="$(sed -En 's/.*"country": ?"([^"]+)".*/\1/p' <<< "$IPINFO")"
-        REGION="$(sed -En 's/.*"region": ?"([^"]+)".*/\1/p' <<< "$IPINFO")"
-        ISP="$(sed -En 's/.*"org": ?"([^"]+)".*/\1/p' <<< "$IPINFO")"
-        printf "%-8s %-16s %-7s %-15s %-30s\n" "$COUNT" "$IP" "$COUNTRY" "$REGION" "$ISP"
-    done
+    journalctl -u "$SSH_SVCNAME" --since "$SINCE" | grep -i "Failed password" |
+        awk '{for(i=1;i<=NF;i++) if($i=="from") print $(i+1)}' |
+        sort | uniq -c | sort -nr | awk '{$1=$1; print}' |
+        while read -r COUNT IP; do
+            # 恶意ip归属地查询
+            IPINFO="$(curl -sL --retry 10 "https://ipinfo.io/$IP/json")"
+            COUNTRY="$(sed -En 's/.*"country": ?"([^"]+)".*/\1/p' <<< "$IPINFO")"
+            REGION="$(sed -En 's/.*"region": ?"([^"]+)".*/\1/p' <<< "$IPINFO")"
+            ISP="$(sed -En 's/.*"org": ?"([^"]+)".*/\1/p' <<< "$IPINFO")"
+            printf "%-8s %-16s %-7s %-15s %-30s\n" "$COUNT" "$IP" "$COUNTRY" "$REGION" "$ISP"
+        done
 }
 
 # 查看拦截状态
@@ -242,7 +247,7 @@ fail2ban_status() {
 fail2ban_menu() {
     local FAIL2BAN_STATE CHOOSE
 
-    docker ps --format '{{.Names}}' 2>/dev/null | grep -qE 'fail2ban' && FAIL2BAN_STATE="$(_green "Installed")" || FAIL2BAN_STATE="$(_yellow "Not Installed")"
+    docker ps --format '{{.Names}}' 2> /dev/null | grep -qE 'fail2ban' && FAIL2BAN_STATE="$(_green "Installed")" || FAIL2BAN_STATE="$(_yellow "Not Installed")"
 
     separator
     echo " fail2ban management menu"
@@ -256,11 +261,11 @@ fail2ban_menu() {
     echo
     reading "Please enter your choose: " CHOOSE
     case "$CHOOSE" in
-        1 ) cdn_check && fail2ban_install && fail2ban_config ;;
-        2 ) fail2ban_uninstall ;;
-        3 ) fail2ban_status ;;
-        4 ) _exists journalctl && ssh_bruteforce ;;
-        * ) die "Wrong parameters." ;;
+    1) cdn_check && fail2ban_install && fail2ban_config ;;
+    2) fail2ban_uninstall ;;
+    3) fail2ban_status ;;
+    4) _exists journalctl && ssh_bruteforce ;;
+    *) die "Wrong parameters." ;;
     esac
 }
 

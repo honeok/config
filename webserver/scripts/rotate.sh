@@ -19,21 +19,26 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
 export DEBIAN_FRONTEND=noninteractive
 
 die() {
-    echo >&2 "Error: $*"; exit 1
+    echo >&2 "Error: $*"
+    exit 1
 }
 
 _exists() {
     local _CMD="$1"
-    if type "$_CMD" >/dev/null 2>&1; then return;
-    elif command -v "$_CMD" >/dev/null 2>&1; then return;
-    elif which "$_CMD" >/dev/null 2>&1; then return;
-    else return 1;
+    if type "$_CMD" > /dev/null 2>&1; then
+        return
+    elif command -v "$_CMD" > /dev/null 2>&1; then
+        return
+    elif which "$_CMD" > /dev/null 2>&1; then
+        return
+    else
+        return 1
     fi
 }
 
 curl() {
     local RET
-    for ((i=1; i<=3; i++)); do
+    for ((i = 1; i <= 3; i++)); do
         command curl --connect-timeout 10 --fail --insecure "$@"
         RET="$?"
         if [ "$RET" -eq 0 ]; then
@@ -77,7 +82,7 @@ check_cmd() {
     INSTALL_PKG=("curl" "gzip")
 
     for pkg in "${INSTALL_PKG[@]}"; do
-        if ! _exists "$pkg" >/dev/null 2>&1; then
+        if ! _exists "$pkg" > /dev/null 2>&1; then
             pkg_install "$pkg"
         fi
     done
@@ -86,7 +91,7 @@ check_cmd() {
 check_srv() {
     local -a WEB_SRV
     WEB_SRV=("nginx" "openresty" "tengine")
-    for ((i=0; i<${#WEB_SRV[@]}; i++)); do
+    for ((i = 0; i < ${#WEB_SRV[@]}; i++)); do
         if docker ps --filter "name=${WEB_SRV[i]}" -q | grep -q .; then
             CONTAINER_NAME="${WEB_SRV[i]}"
             break
@@ -103,13 +108,13 @@ log_rotate() {
     local START_TIME
     START_TIME="$(date +%Y-%m-%d-%S)"
 
-    cd "${SCRIPT_DIR:?}" >/dev/null 2>&1 || die "Cannot enter directory."
-    mv -f logs/access.log "logs/access_$START_TIME.log" >/dev/null 2>&1
-    mv -f logs/error.log "logs/error_$START_TIME.log" >/dev/null 2>&1
-    docker exec "$CONTAINER_NAME" nginx -s reopen >/dev/null 2>&1
-    gzip "logs/access_$START_TIME.log" >/dev/null 2>&1
-    gzip "logs/error_$START_TIME.log" >/dev/null 2>&1
-    find logs -type f -name "*.log.gz" -mtime +7 -exec rm -f {} \; >/dev/null 2>&1
+    cd "${SCRIPT_DIR:?}" > /dev/null 2>&1 || die "Cannot enter directory."
+    mv -f logs/access.log "logs/access_$START_TIME.log" > /dev/null 2>&1
+    mv -f logs/error.log "logs/error_$START_TIME.log" > /dev/null 2>&1
+    docker exec "$CONTAINER_NAME" nginx -s reopen > /dev/null 2>&1
+    gzip "logs/access_$START_TIME.log" > /dev/null 2>&1
+    gzip "logs/error_$START_TIME.log" > /dev/null 2>&1
+    find logs -type f -name "*.log.gz" -mtime +7 -exec rm -f {} \; > /dev/null 2>&1
 }
 
 send_msg() {
@@ -118,24 +123,24 @@ send_msg() {
     if [[ -n "$BOT_TOKEN" && -n "$CHAT_ID" ]]; then
         curl -Ls -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
             -H "Content-Type: application/json" \
-            -d "{\"chat_id\":\"$CHAT_ID\",\"text\":\"$MESSAGE\"}" >/dev/null 2>&1 || true
+            -d "{\"chat_id\":\"$CHAT_ID\",\"text\":\"$MESSAGE\"}" > /dev/null 2>&1 || true
     fi
     if [ -n "$BARK_TOKEN" ]; then
         curl -Ls -X POST "https://${BARK_URL:-api.day.app}/$BARK_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "{\"title\":\"$CONTAINER_NAME\",\"body\":\"${MESSAGE//$'\n'/\\n}\"}" >/dev/null 2>&1 || true
+            -d "{\"title\":\"$CONTAINER_NAME\",\"body\":\"${MESSAGE//$'\n'/\\n}\"}" > /dev/null 2>&1 || true
     fi
 }
 
 ip_address() {
     local IPV4_ADDRESS IPV6_ADDRESS
 
-    IPV4_ADDRESS="$(curl -Ls -4 http://www.qualcomm.cn/cdn-cgi/trace 2>/dev/null | grep -i '^ip=' | cut -d'=' -f2 || true)"
-    IPV6_ADDRESS="$(curl -Ls -6 http://www.qualcomm.cn/cdn-cgi/trace 2>/dev/null | grep -i '^ip=' | cut -d'=' -f2 || true)"
+    IPV4_ADDRESS="$(curl -Ls -4 http://www.qualcomm.cn/cdn-cgi/trace 2> /dev/null | grep -i '^ip=' | cut -d'=' -f2 || true)"
+    IPV6_ADDRESS="$(curl -Ls -6 http://www.qualcomm.cn/cdn-cgi/trace 2> /dev/null | grep -i '^ip=' | cut -d'=' -f2 || true)"
 
     if [[ -n "$IPV4_ADDRESS" && "$IPV4_ADDRESS" =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
         PUBLIC_IP="$IPV4_ADDRESS"
-        MASKED_IP="$(awk -F. 'NF==4{print $1"."$2".*.*"} NF!=4{print ""}' <<<"$IPV4_ADDRESS")"
+        MASKED_IP="$(awk -F. 'NF==4{print $1"."$2".*.*"} NF!=4{print ""}' <<< "$IPV4_ADDRESS")"
         return
     fi
     if [[ -n "$IPV6_ADDRESS" && "$IPV6_ADDRESS" == *":"* ]]; then
