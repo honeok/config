@@ -1,0 +1,18 @@
+---
+services:
+  openresty:
+    image: honeok/openresty:1.29.8.2-alpine-edge
+    container_name: openresty
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - $PWD/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - $PWD/conf.d:/etc/nginx/conf.d
+      - $PWD/lua:/etc/nginx/lua
+      - $PWD/certs:/etc/nginx/certs
+      - $PWD/html:/usr/local/openresty/nginx/html
+      - $PWD/logs:/usr/local/openresty/nginx/logs
+    tmpfs:
+      - /var/cache/openresty:rw,noexec,nosuid,size=1024m
+    network_mode: host

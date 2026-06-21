@@ -16,3 +16,21 @@ updates:
       actions:
         patterns:
           - "*"
+
+  - package-ecosystem: "docker-compose"
+    directories:
+      - "/blog"
+      - "/webserver/openresty"
+    schedule:
+      interval: "daily"
+      time: "00:00"
+      timezone: "Asia/Shanghai"
+    open-pull-requests-limit: 10
+    target-branch: "dev"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      docker-compose:
+        patterns:
+          - "*"
