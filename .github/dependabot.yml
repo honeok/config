@@ -20,6 +20,7 @@ updates:
   - package-ecosystem: "docker-compose"
     directories:
       - "/blog"
+      - "/webserver/nginx"
       - "/webserver/openresty"
     schedule:
       interval: "daily"
