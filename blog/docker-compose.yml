@@ -1,0 +1,83 @@
+---
+services:
+  openresty:
+    image: honeok/openresty:1.31.2.1-alpine-edge
+    container_name: openresty
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - $PWD/nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - $PWD/nginx/conf.d:/etc/nginx/conf.d
+      - $PWD/nginx/lua:/etc/nginx/lua
+      - $PWD/nginx/certs:/etc/nginx/certs
+      - $PWD/nginx/html:/usr/local/openresty/nginx/html
+      - $PWD/nginx/logs:/usr/local/openresty/nginx/logs
+      - php-socket:/run/php
+    tmpfs:
+      - /var/cache/openresty:rw,noexec,nosuid,size=512m
+    network_mode: host
+
+  mysql:
+    image: percona/percona-server:8.4.6-6.1
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: 8aDdVzUzXwjEAOhifFW6yg # openssl rand -base64 16
+      MYSQL_USER: honeok
+      MYSQL_PASSWORD: 4siz2vOewdLbww # openssl rand -base64 10
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - $PWD/mysql/my.cnf:/etc/my.cnf
+      - $PWD/mysql/my.cnf.d:/etc/my.cnf.d
+      - $PWD/mysql/data:/var/lib/mysql
+      - $PWD/mysql/logs:/var/log/mysql
+    healthcheck:
+      test: ["CMD-SHELL", 'mysql --user=root --password=8aDdVzUzXwjEAOhifFW6yg --execute "SELECT 1"']
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - web
+
+  php:
+    image: honeok/php:8.5.1-fpm-alpine
+    container_name: php
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - $PWD/nginx/html:/var/www/html
+      - php-socket:/run/php
+    networks:
+      - web
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  redis:
+    image: ghcr.io/valkey-io/valkey:9.1.0-alpine
+    container_name: redis
+    restart: unless-stopped
+    # ports:
+    #   - 127.0.0.1:6379:6379
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - $PWD/redis/data:/data
+    networks:
+      - web
+
+volumes:
+  php-socket:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: size=64m
+
+networks:
+  web:
+    driver: bridge
