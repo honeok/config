@@ -1,16 +1,12 @@
 ---
-name: "Dependabot Merge"
+name: "Dependabot merge"
 
 on:
   pull_request:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   dependabot:
-    name: "Dependabot Merge"
+    name: "Dependabot merge"
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
     permissions:
@@ -18,7 +14,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: "Fetch Dependabot metadata"
+      - name: "Fetch dependabot metadata"
         uses: dependabot/fetch-metadata@v3
         with:
           github-token: ${{ github.token }}
