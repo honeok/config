@@ -2,28 +2,11 @@
   <img src="https://fastly.jsdelivr.net/gh/jglovier/dotfiles-logo@main/dotfiles-logo.png" alt="Logo" width="450" />
 </div>
 
-## .bashrc
-
-Description: This file is used to enhance the default .bashrc, add custom parameters.
-
-```shell
-cp ~/.bashrc{,.bak}
-```
-
-```
-# Debian
-curl -Ls https://github.com/honeok/config/raw/master/dotfiles/.debian_bashrc -o ~/.bashrc
-```
-
-```
-. ~/.bashrc
-```
-
 ## 99-honeok.sh
 
-Description: This script is used custom motd showing hostname ip address disk usage and system uptime.
+A lightweight custom MOTD script that displays Fastfetch output, hostname, public IP addresses, disk usage, system uptime, and the current login time.
 
 ```shell
-curl -Ls https://github.com/honeok/config/raw/master/dotfiles/99-honeok.sh -o /etc/profile.d/99-honeok.sh
+curl -fsSL https://github.com/honeok/config/raw/master/dotfiles/99-honeok.sh -o /etc/profile.d/99-honeok.sh
 chmod +x /etc/profile.d/99-honeok.sh
 ```
