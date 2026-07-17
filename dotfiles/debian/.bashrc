@@ -28,6 +28,7 @@ HISTTIMEFORMAT='%F %T ' # 为历史记录显示添加时间戳
 
 shopt -s histappend   # Shell 退出时将本次命令历史追加到历史文件而不是覆盖
 shopt -s checkwinsize # 执行外部命令后自动更新终端窗口尺寸
+shopt -s cdspell      # 执行 cd 时尝试纠正目录名拼写错误
 shopt -s dirspell     # 补全目录名时尝试纠正轻微拼写错误
 
 # 启用 less 输入预处理 支持查看压缩包和部分非文本文件
