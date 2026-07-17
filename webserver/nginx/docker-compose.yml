@@ -1,7 +1,7 @@
 ---
 services:
   nginx:
-    image: honeok/nginx:1.31.2-alpine
+    image: honeok/nginx:1.31.3-alpine
     container_name: nginx
     restart: unless-stopped
     environment:
