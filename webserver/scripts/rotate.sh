@@ -81,10 +81,11 @@ check_root() {
 }
 
 check_cmd() {
-    local -a INSTALL_PKG
-    INSTALL_PKG=("curl" "gzip")
+    local -a need_pkg
 
-    for pkg in "${INSTALL_PKG[@]}"; do
+    need_pkg=("curl" "gzip")
+
+    for pkg in "${need_pkg[@]}"; do
         if ! is_have_cmd "$pkg" > /dev/null 2>&1; then
             install_pkg "$pkg"
         fi
