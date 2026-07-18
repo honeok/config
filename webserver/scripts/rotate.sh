@@ -7,7 +7,7 @@
 set -eEuo pipefail
 
 # shellcheck disable=SC2034
-readonly SCRIPT_VERSION='0.2.0'
+readonly SCRIPT_VERSION='0.2.1'
 
 # 各变量默认值
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
@@ -142,7 +142,7 @@ send_msg() {
     fi
 }
 
-ip_address() {
+ip_addr() {
     local ipv4_addr ipv6_addr
 
     ipv4_addr="$(curl -Ls -4 http://www.qualcomm.cn/cdn-cgi/trace 2> /dev/null | grep -i '^ip=' | cut -d'=' -f2 || true)"
@@ -184,7 +184,7 @@ const_msg() {
 
     end_time="$(date -u '+%Y-%m-%d %H:%M:%S' -d '+8 hours')"
 
-    ip_address
+    ip_addr
     ip_info
 
     send_msg "$end_time
