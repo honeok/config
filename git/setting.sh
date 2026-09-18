@@ -21,12 +21,6 @@ gitlab*) WORK_PLATFORM="gitlab" ;;
 *) echo "Error: Unknown platform." && exit 1 ;;
 esac
 
-# global variable
-if ! git config --global --get-regexp url | grep -Fx "url.ssh://git@ssh.github.com:443/.insteadof git@github.com:" > /dev/null 2>&1; then
-    git config --global url."ssh://git@ssh.github.com:443/".insteadof git@github.com:
-    ssh -T -p 443 git@ssh.github.com
-fi
-
 # set user
 while true; do
     separator
