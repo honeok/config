@@ -12,6 +12,9 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
+    cooldown:
+      exclude:
+        - "*"
     groups:
       actions:
         patterns:
@@ -30,6 +33,9 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
+    cooldown:
+      exclude:
+        - "*"
     groups:
       docker-compose:
         patterns:
