@@ -48,6 +48,13 @@
   "errorLens.fontStyleItalic": true,
   "errorLens.messageBackgroundMode": "message",
 
+  // Astro
+  "[astro]": {
+    "editor.defaultFormatter": "astro-build.astro-vscode",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true
+  },
+
   // Go
   "[go]": {
     "editor.defaultFormatter": "golang.go",
