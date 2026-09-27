@@ -4,6 +4,6 @@ A practical `.bashrc` configuration for Debian and Ubuntu with useful aliases an
 
 ```shell
 cp "$HOME/.bashrc"{,.bak}
-curl -fsSL https://github.com/honeok/config/raw/master/dotfiles/debian/.bashrc -o "$HOME/.bashrc"
+curl -fsSL https://github.com/honeok/config/raw/main/dotfiles/debian/.bashrc -o "$HOME/.bashrc"
 source "$HOME/.bashrc"
 ```
