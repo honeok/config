@@ -111,6 +111,12 @@
     }
   },
 
+  // Toml
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml",
+    "editor.formatOnSave": true
+  },
+
   // Typescript
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
