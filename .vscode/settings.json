@@ -9,8 +9,8 @@
   "explorer.confirmPasteNative": false,
 
   // Editor setting
-  "editor.fontFamily": "Consolas",
-  "editor.fontSize": 16,
+  "editor.fontFamily": "JetBrains Mono,Consolas",
+  "editor.fontSize": 15,
   "editor.renderWhitespace": "selection",
   "editor.rulers": [80, 120],
   "editor.bracketPairColorization.enabled": true,
@@ -50,16 +50,12 @@
 
   // Astro
   "[astro]": {
-    "editor.defaultFormatter": "astro-build.astro-vscode",
-    "editor.formatOnSave": true,
-    "editor.formatOnPaste": true
+    "editor.defaultFormatter": "astro-build.astro-vscode"
   },
 
   // Go
   "[go]": {
     "editor.defaultFormatter": "golang.go",
-    "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
     "editor.inlayHints.enabled": "on"
   },
   "gopls": {
@@ -113,24 +109,19 @@
 
   // Toml
   "[toml]": {
-    "editor.defaultFormatter": "tamasfe.even-better-toml",
-    "editor.formatOnSave": true
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
 
   // Typescript
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 
-  // Vue
-  "files.associations": {
-    "*.vue": "vue"
+  // XML
+  "[xml]": {
+    "editor.defaultFormatter": "redhat.vscode-xml"
   },
-  "[vue]": {
-    "editor.defaultFormatter": "Vue.volar",
-    "editor.formatOnSave": true
-  },
+  "xml.format.preservedNewlines": 1,
 
   // Yaml
   "[yaml]": {
